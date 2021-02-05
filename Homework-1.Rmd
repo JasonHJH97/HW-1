@@ -1,0 +1,65 @@
+---
+title: "HW1"
+author: "Junhan Huang"
+date: "2/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(rvest)
+library(reshape2)
+```
+# 1.Bridge
+
+``` {r}
+CA19<-read.delim("~/Desktop/CA199.txt")
+```
+
+# 2.Faculty
+```{r}
+Name<-c()
+Position<-c()
+Department<-c()
+Degree_Information<-c()
+
+Faculty<-readLines("https://guide.wisc.edu/faculty/")
+Faculty<-tibble(Faculty)
+A<-Faculty[c(163:188),1]
+A<-unlist(A)
+
+
+A<-strsplit(A,split="<br/></p></li><li><p>")
+A<-unlist(A)
+
+A<-strsplit(A,split="<ul class=\"uw-people\"><li><p>")
+A<-unlist(A)
+A<-strsplit(A,split="<br/>")
+
+num<-1:4014
+names(A)<-num
+
+n<-length(A)
+
+
+
+for(i in 1:n){
+  tep<-unlist(A[i])
+  Name[i]<-tep[1]
+  Position[i]<-tep[2]
+  Department[i]<-tep[3]
+  Degree_Information[i]<- tep[4]
+}
+
+FACULTY<-data_frame(Name,Position,Department,Degree_Information)
+
+Mis<-is.na(FACULTY$Name)
+int<-which(Mis==TRUE)
+
+FACULTY<-FACULTY[-c(int),]
+
+write.csv(FACULTY, "FACULTY.csv", row.names = F)
+```
+```
+
